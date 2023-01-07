@@ -7,6 +7,11 @@ class SessionsController < ApplicationController
     # =>上記文でDBに一致するemailが存在するか実行
     if !@user.nil? && @user.authenticate(params[:session][:password])
       log_in(@user)
+      if params[:session][:remember_me] == '1'
+      remember(@user)
+      else
+      forget(@user)
+      end
       flash[:success] = 'login success!'
       redirect_to @user
     # =>find_byだと空白文字が返ってきた時,nilとして返してしまうためnilガードを敷き、passwordがauthenticateと合致するかチェック
@@ -17,9 +22,9 @@ class SessionsController < ApplicationController
 end
 
 def destroy
-log_out 
-redirect_to root_path
-end
+    log_out if logged_in?
+    redirect_to root_url
+  end
 
 
 def User.digest(string)
