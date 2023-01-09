@@ -13,9 +13,9 @@ class SessionsController < ApplicationController
       forget(@user)
       end
       flash[:success] = 'login success!'
-      redirect_to @user
+      redirect_back_or @user
     # =>find_byだと空白文字が返ってきた時,nilとして返してしまうためnilガードを敷き、passwordがauthenticateと合致するかチェック
-  else
+    else
     flash.now[:danger] = 'invalid email or password'
     render 'new'
   end
