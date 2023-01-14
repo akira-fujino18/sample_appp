@@ -3,23 +3,23 @@ class SessionsController < ApplicationController
   end
   
   def create
-    @user = User.find_by(email: params[:session][:email].downcase)
-    # =>上記文でDBに一致するemailが存在するか実行
-    if !@user.nil? && @user.authenticate(params[:session][:password])
-      log_in(@user)
-      if params[:session][:remember_me] == '1'
-      remember(@user)
+    user = User.find_by(email: params[:session][:email].downcase)
+    if user && user.authenticate(params[:session][:password])
+      if user.activated?
+        log_in user
+        params[:session][:remember_me] == '1' ? remember(user) : forget(user)
+        redirect_back_or user
       else
-      forget(@user)
+        message  = "Account not activated. "
+        message += "Check your email for the activation link."
+        flash[:warning] = message
+        redirect_to root_url
       end
-      flash[:success] = 'login success!'
-      redirect_back_or @user
-    # =>find_byだと空白文字が返ってきた時,nilとして返してしまうためnilガードを敷き、passwordがauthenticateと合致するかチェック
     else
-    flash.now[:danger] = 'invalid email or password'
-    render 'new'
+      flash.now[:danger] = 'Invalid email/password combination'
+      render 'new'
+    end
   end
-end
 
 def destroy
     log_out if logged_in?
