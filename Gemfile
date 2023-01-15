@@ -4,7 +4,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.7.6'
 
 gem 'rails',      '6.0.4'
+gem 'active_storage_validations', '0.8.2'
+gem 'image_processing',           '1.12.2'
+gem 'mini_magick',                '4.9.5'
 gem 'will_paginate', '3.3.1'
+gem 'aws-sdk-s3',              '1.113.0', require: false
 gem 'bootstrap-will_paginate', '1.0.0'
 gem 'faker',      '2.20.0'
 gem 'bootstrap-sass', '3.4.1'
