@@ -5,6 +5,7 @@ before_action :admin_user,     only: :destroy
 
   def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
   
   def new
@@ -13,6 +14,7 @@ before_action :admin_user,     only: :destroy
   
   def index
     @users = User.paginate(page: params[:page])
+    
   end
   
   def create
@@ -58,16 +60,6 @@ end
       params.require(:user).permit(:name, :email, :password,
                                    :password_confirmation)
     end
-  end
-  
-  # ログイン済みユーザーかどうか確認
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "ログインしないとだめだね"
-        redirect_to login_url
-      end
-    end
 
     # 正しいユーザーかどうか確認
     def correct_user
@@ -76,10 +68,9 @@ end
       flash[:danger] = "不正にアクセスしようとしたのかい？"
       redirect_to root_url 
     end
-    
+  end
+  
     def admin_user
       redirect_to(root_url) unless current_user.admin?
     end
   end
-  
-  
